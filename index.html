@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gold Miner TMA</title>
+
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #10100d;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  min-height: 100vh;
+  background: radial-gradient(#38280c, #10100d 65%);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header h2 {
+  color: #ffd45c;
+  font-size: 21px;
+}
+
+.level {
+  border: 1px solid #bd902e;
+  color: gold;
+  border-radius: 20px;
+  padding: 8px 13px;
+  font-size: 11px;
+}
+
+.balance {
+  text-align: center;
+  padding: 35px 0;
+}
+
+.balance p {
+  color: #b7a77f;
+  font-size: 12px;
+}
+
+.balance h1 {
+  color: #ffd45c;
+  font-size: 38px;
+  margin: 12px;
+}
+
+.balance small {
+  color: #b7a77f;
+}
+
+.mining {
+  background: #211b10;
+  border: 1px solid #806020;
+  border-radius: 20px;
+  text-align: center;
+  padding: 20px;
+}
+
+.mining h3 {
+  color: #f4cc64;
+}
+
+.coin {
+  width: 175px;
+  height: 175px;
+  border-radius: 50%;
+  border: 8px solid #bd871f;
+  background: radial-gradient(#fff0a3, #e5a72e, #95530a);
+  margin: 25px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #573500;
+  cursor: pointer;
+  box-shadow: 0 0 30px #e7a72b66;
+  touch-action: manipulation;
+}
+
+.coin:active {
+  transform: scale(.94);
+}
+
+.coin span {
+  font-size: 70px;
+  font-weight: bold;
+  font-family: Georgia, serif;
+}
+
+.coin small {
+  font-weight: bold;
+  font-size: 10px;
+}
+
+#message {
+  color: #c9b98f;
+  font-size: 13px;
+}
+
+.stats {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #54452b;
+  padding-top: 18px;
+  margin-top: 20px;
+}
+
+.stats h3 {
+  color: gold;
+}
+
+.stats small {
+  font-size: 9px;
+  color: #b7a77f;
+}
+
+.card {
+  background: #211b10;
+  border: 1px solid #51401f;
+  border-radius: 15px;
+  padding: 18px;
+  margin-top: 15px;
+}
+
+.card h3 {
+  color: #ffd45c;
+  font-size: 15px;
+}
+
+.card p {
+  color: #b7a77f;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+button {
+  background: linear-gradient(135deg, #ffe28a, #bd801a);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 15px;
+  color: #261900;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.auto {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wide {
+  width: 100%;
+  margin-top: 15px;
+}
+
+nav {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  padding: 15px 0;
+  border-top: 1px solid #554321;
+}
+
+nav button {
+  background: transparent;
+  color: gold;
+  padding: 5px;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+nav small {
+  font-size: 10px;
+  color: white;
+}
+
+#toast {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffd45c;
+  color: #211500;
+  padding: 12px 20px;
+  border-radius: 20px;
+  display: none;
+  font-size: 13px;
+  font-weight: bold;
+  max-width: 90%;
+}
+
+.ref-link {
+  background: #15130e;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+  margin-top: 12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <h2>⛏ GOLD MINER</h2>
+  <span class="level">LEVEL 1</span>
+</header>
+
+<section class="balance">
+  <p>YOUR GOLD BALANCE</p>
+  <h1>🪙 <span id="balance">0</span></h1>
+  <small>GOLD COINS</small>
+</section>
+
+<section class="mining">
+  <h3>⛏ YOUR MINE</h3>
+
+  <button class="coin" id="mineBtn">
+    <span>G</span>
+    <small>TAP TO MINE</small>
+  </button>
+
+  <p id="message">Tap the gold coin to earn!</p>
+
+  <div class="stats">
+    <div>
+      <h3>+1</h3>
+      <small>PER TAP</small>
+    </div>
+    <div>
+      <h3>+2</h3>
+      <small>PER MINUTE</small>
+    </div>
+    <div>
+      <h3>8H</h3>
+      <small>AUTO LIMIT</small>
+    </div>
+  </div>
+</section>
+
+<section class="card auto">
+  <div>
+    <h3>⚡ Automatic Mining</h3>
+    <p>Collect your offline rewards</p>
+  </div>
+  <button id="collectBtn">COLLECT</button>
+</section>
+
+<section class="card">
+  <h3>🎁 Daily Reward</h3>
+  <p>Claim 250 GOLD every 24 hours.</p>
+  <button class="wide" id="dailyBtn">CLAIM REWARD</button>
+</section>
+
+<section class="card">
+  <h3>👥 Invite Friends</h3>
+  <p>Invite friends to your mining club.</p>
+  <div class="ref-link" id="refLink">Your referral link will appear here.</div>
+  <button class="wide" id="inviteBtn">COPY INVITE LINK</button>
+</section>
+
+<section class="card">
+  <h3>🏆 Leaderboard</h3>
+  <p id="ranking">Your rank: Miner #1</p>
+</section>
+
+<nav>
+  <button onclick="showSection('mining')">⛏<small>Mine</small></button>
+  <button onclick="showSection('daily')">🎁<small>Rewards</small></button>
+  <button onclick="showSection('friends')">👥<small>Friends</small></button>
+  <button onclick="showSection('ranking')">🏆<small>Rank</small></button>
+</nav>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+
+// Telegram integration
+const tg = window.Telegram?.WebApp;
+
+tg?.ready();
+tg?.expand();
+
+// Local storage
+let balance = Number(localStorage.getItem("goldBalance")) || 0;
+
+let lastCollect =
+Number(localStorage.getItem("lastCollect")) || Date.now();
+
+function updateBalance() {
+  document.getElementById("balance").textContent =
+    Math.floor(balance).toLocaleString();
+
+  localStorage.setItem("goldBalance", balance);
+}
+
+function addGold(amount) {
+  balance += amount;
+  updateBalance();
+}
+
+function notify(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  }, 2200);
+}
+
+// Tap mining
+document.getElementById("mineBtn").onclick = function() {
+
+  addGold(1);
+
+  document.getElementById("message").textContent =
+    "+1 GOLD MINED! ⛏";
+
+};
+
+// Automatic mining
+document.getElementById("collectBtn").onclick = function() {
+
+  const now = Date.now();
+
+  const elapsed = Math.min(
+    8 * 60 * 60 * 1000,
+    Math.max(0, now - lastCollect)
+  );
+
+  const reward = Math.floor(elapsed / 60000 * 2);
+
+  if (reward > 0) {
+
+    addGold(reward);
+
+    lastCollect = now;
+
+    localStorage.setItem("lastCollect", now);
+
+    notify("You collected " + reward + " GOLD!");
+
+  } else {
+
+    notify("No offline rewards available yet!");
+
+  }
+
+};
+
+// Daily rewards
+document.getElementById("dailyBtn").onclick = function() {
+
+  const lastDaily =
+    Number(localStorage.getItem("lastDaily")) || 0;
+
+  if (Date.now() - lastDaily >= 86400000) {
+
+    addGold(250);
+
+    localStorage.setItem("lastDaily", Date.now());
+
+    notify("+250 GOLD Daily Reward!");
+
+  } else {
+
+    notify("Come back tomorrow!");
+
+  }
+
+};
+
+// Referral system link
+document.getElementById("inviteBtn").onclick = async function() {
+
+  const botUsername = "YOUR_BOT_USERNAME";
+
+  const userId = tg?.initDataUnsafe?.user?.id;
+
+  if (!userId || botUsername === "YOUR_BOT_USERNAME") {
+    notify("Configure your Telegram bot username first!");
+    return;
+  }
+
+  const link =
+    `https://t.me/${botUsername}?startapp=ref_${userId}`;
+
+  document.getElementById("refLink").textContent = link;
+
+  try {
+
+    await navigator.clipboard.writeText(link);
+
+    notify("Referral link copied!");
+
+  } catch {
+
+    notify("Your referral link is displayed above.");
+
+  }
+
+};
+
+// Navigation
+function showSection(section) {
+
+  const element = document.querySelector("." + section);
+
+  if (element) {
+
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+
+  }
+
+}
+
+// Initial balance
+updateBalance();
+
+</script>
+
+</body>
+</html>
